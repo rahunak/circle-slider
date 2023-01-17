@@ -1,0 +1,100 @@
+@use 'sass:math';
+//переменная количества изображений ($n).
+$n : 4;
+.content__wrapper{
+display: flex;
+justify-content: center;
+align-items: center;
+height: 75vh;
+}
+.title{
+  position: absolute;
+  z-index: 100;
+  bottom: 1%;
+  font-size: 45pt;
+  color: #DFBA69;
+  text-shadow: 1px 0 1px #000, 
+  0 1px 1px #000, 
+  -1px 0 1px #000, 
+  0 -1px 1px #000;
+}
+.bg_image{
+  background-image: url(../images/forest.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.gallery{
+  --width:50vw;
+  display: grid;
+  width: var(--width);
+  aspect-ratio: 1;
+  padding: calc(var(--width)/20);//?
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+
+  &::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: inherit;/* наследуется тот же внутренний отступ*/
+    border-radius: 50%;
+    background: repeating-conic-gradient(#789048 0 30deg, #DFBA69 0 60deg);
+    mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: rotateImages 8s infinite  cubic-bezier(.5, -0.2, .5, 1.2);
+  }
+}
+
+.gallery > img{
+  grid-area: 1/1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  // animation: rotateImages 8s infinite linear;//simple variant
+  animation: rotateImages 8s infinite cubic-bezier(.5, -0.2, .5, 1.2);
+  //R = S / (2 * sin(180 градусов / N))
+ //transform-origin: 50% 120.7%;//simple variant
+ transform-origin: 50% calc(50% / math.sin( calc(180deg / $n) ) + 50%);
+
+  // &:nth-child(2){ animation-delay: -2s;}/* 8c / 4 *///simple variant
+  // &:nth-child(3){ animation-delay: -4s;}/* 8c / 4 *///simple variant
+  // &:nth-child(4){ animation-delay: -6s;}/* 8c / 4 *///simple variant
+}
+
+
+
+//Формула для задержек — (1-$i)*продолжительность (duration)/$n
+
+@keyframes rotateImages{
+  //через кажые 90 градусов - задержка
+  // 0%, 3%    {transform: rotate(0);}//simple variant
+  // 22%, 27%  {transform: rotate(-90deg);}//simple variant
+  // 47%, 52%  {transform: rotate(-180deg);}//simple variant
+  // 72%, 77%  {transform: rotate(-270deg);}//simple variant
+  // 98%, 100% {transform: rotate(-360deg);}//simple variant
+  //Каждое изображение занимает 5% времени анимации
+  0% , 3% {transform: rotate(0);}
+  @for $i from 1 to $n {
+    #{ calc( $i * 100  / $n - 2)}% , #{calc($i * 100  / $n + 3)}%   {transform: rotate( #{calc($i / $n) * -360}deg );}
+  }
+  98% , 100% {transform: rotate(-360deg);}
+}
+
+
+@for $i from 2 to ($n + 1){
+  .gallery > img:nth-child(#{$i}){
+    animation-delay: calc((1 - $i) / $n * 8s);
+  }
+}
