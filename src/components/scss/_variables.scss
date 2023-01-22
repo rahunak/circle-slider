@@ -1,0 +1,12 @@
+@use 'sass:math';
+/* Define all colours */
+$color:#999999;
+$n : 4;//кол-вo изображений ($n).
+$time_delay:calc(30 / $n ); // Max=99 it's too fast, min=0 .
+$width:50vh;
+
+:root{
+  --color:#111111;
+  --time_animation:8s;
+  --time_animation_wrapper:8s;
+}
